@@ -4,8 +4,8 @@ import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import { errorHandler } from './middleware/error.middleware';
-import IndexRoute from './routes/index';
-import UserRoute from './routes/user';
+import IndexRoute from './routes/index.route';
+import UserRoute from './routes/user.route';
 import Database from "./services/database.service";
 
 // Initialize environment variables
