@@ -1,6 +1,7 @@
 // Import required packages
 import dotenv from "dotenv";
 import express from "express";
+import cors from "cors";
 import morgan from "morgan";
 import { errorHandler } from './middleware/error.middleware';
 import IndexRoute from './routes/index';
@@ -20,6 +21,7 @@ const database = new Database();
 database.connect();
 
 // Middleware setup
+app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
