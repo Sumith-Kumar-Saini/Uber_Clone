@@ -30,6 +30,9 @@ export default class Database {
       // Setup event listeners (like disconnect, error)
       this.setupListeners();
 
+      // Load models
+      await import("../models/user.model");
+
       // Logs the success
       databaseLogger.log("Successfully connected to MongoDB.");
     } catch (error) {
