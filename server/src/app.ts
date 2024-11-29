@@ -6,7 +6,7 @@ import morgan from "morgan";
 import { errorHandler } from './middleware/error.middleware';
 import IndexRoute from './routes/index';
 import UserRoute from './routes/user';
-import Database from "./services/Database";
+import Database from "./services/database.service";
 
 // Initialize environment variables
 dotenv.config();
