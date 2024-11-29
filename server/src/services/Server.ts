@@ -15,7 +15,7 @@ export default class Server {
   };
 
   private handleListening = (): void => {
-    if (process.env.DEBUG === 'development:*') console.clear();
+    if (process.env.NODE_ENV === "development") console.clear();
     serverLogger.log(`Server is running on PORT: ${PORT}`);
   };
 
@@ -24,4 +24,4 @@ export default class Server {
     this.server.on("error", this.handleError);
     this.server.on("listening", this.handleListening);
   }
-} 
+}
