@@ -5,12 +5,19 @@ import morgan from "morgan";
 import { errorHandler } from './middleware/error.middleware';
 import IndexRoute from './routes/index';
 import UserRoute from './routes/user';
+import Database from "./services/Database";
 
 // Initialize environment variables
 dotenv.config();
 
 // Create Express application instance
 const app = express();
+
+// initials database
+const database = new Database();
+
+// connects database
+database.connect();
 
 // Middleware setup
 app.use(morgan("dev"));
