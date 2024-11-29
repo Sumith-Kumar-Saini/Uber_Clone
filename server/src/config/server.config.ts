@@ -1,12 +1,14 @@
 import debug from "debug";
 import normalizePort from "../utils/normalizePort";
+import { Logger } from "../types/logger.types";
 
 // Define namespace constants
-const SERVER_LOG_NAMESPACE = "development:server-log";
-const SERVER_ERROR_NAMESPACE = "development:server-error";
+const ENV = process.env.NODE_ENV || 'development';
+const SERVER_LOG_NAMESPACE = `${ENV}:server-log`;
+const SERVER_ERROR_NAMESPACE = `${ENV}:server-error`;
 
 // Create debuggers with specific namespaces
-export const serverLogger = {
+export const serverLogger: Logger = {
   log: debug(SERVER_LOG_NAMESPACE),
   error: debug(SERVER_ERROR_NAMESPACE),
 };
