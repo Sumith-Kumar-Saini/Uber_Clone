@@ -8,7 +8,7 @@ export default class Database {
   constructor() {
     this.uri =
       process.env.MONGODB_URI || "mongodb://localhost:27017/uber_clone";
-    this.options = { autoIndex: true };
+    this.options = { autoIndex: process.env.NODE_ENV === "development" };
   }
 
   private handleDisconnect = (): void =>
