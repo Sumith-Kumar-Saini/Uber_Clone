@@ -1,5 +1,8 @@
 import { model } from "mongoose";
-import { IUser } from "../types/user.types";
+import { IUser, IUserModel } from "../types/user.types";
 import { UserSchema } from "../schemas/user.schema";
 
-export const UserModel = model<IUser>('User', UserSchema);
+/**
+ * User Model based on UserSchema with IUser and IUserModel interfaces.
+ */
+export const UserModel = model<IUser, IUserModel>("User", UserSchema);
