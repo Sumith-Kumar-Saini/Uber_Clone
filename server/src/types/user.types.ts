@@ -17,7 +17,6 @@ export interface IUser extends Document {
 
 /**
  * Interface for additional User model-specific methods.
+ * Currently, no additional methods are required.
  */
-export interface IUserModel extends Model<IUser> {
-  hashPassword(password: string): Promise<string>;
-}
+export interface IUserModel extends Model<IUser> {}
