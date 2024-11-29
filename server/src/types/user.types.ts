@@ -1,9 +1,11 @@
 export interface IUser {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
+  fullname: {
+    firstName: string;
+    lastName: string;
+  };
+  socketID: string;
   createAt: Date;
   updateAt: Date;
 }
