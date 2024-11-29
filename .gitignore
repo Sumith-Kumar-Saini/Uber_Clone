@@ -36,12 +36,12 @@ lerna-debug.log*
 /cypress/screenshots/
 
 # Editor/IDE
-.vscode
 .vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
+*.vscode/
+*.vscode/extensions.json
+*.vscode/settings.json
+*.vscode/tasks.json
+*.vscode/launch.json
 .idea/
 *.sublime-project
 *.sublime-workspace
