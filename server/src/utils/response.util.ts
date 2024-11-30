@@ -26,7 +26,7 @@ export const handleValidationErrors = (
  * @param error - Error object or string
  */
 export const sendErrorResponse = (res: Response, error: unknown): void => {
-  res.status(500).json({
+  res.status(400).json({
     success: false,
     message: (error as Error).message || "An unexpected error occurred",
     stack:
