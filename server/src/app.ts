@@ -15,10 +15,8 @@ dotenv.config();
 // Create Express application instance
 const app = express();
 
-// initials database
+// Initialize and connect to the database
 const database = new Database();
-
-// connects database
 database.connect();
 
 // Middleware setup
@@ -30,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.use("/", IndexRoute);
-app.use("/user", UserRoute);
+app.use("/api/auth", UserRoute);
 
 // Error handling
 app.use(errorHandler);

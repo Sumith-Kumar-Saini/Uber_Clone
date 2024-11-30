@@ -1,5 +1,4 @@
 import { Schema } from "mongoose";
-import bcrypt from "bcrypt";
 import { IUser } from "../types/user.types";
 
 /**
@@ -7,7 +6,7 @@ import { IUser } from "../types/user.types";
  */
 export const UserSchema = new Schema<IUser>(
   {
-    fullname: {
+    fullName: {
       firstName: {
         type: String,
         required: true,
@@ -15,7 +14,6 @@ export const UserSchema = new Schema<IUser>(
       },
       lastName: {
         type: String,
-        required: true,
         minlength: [3, "Last name must be at least 3 characters long"],
       },
     },
@@ -23,7 +21,7 @@ export const UserSchema = new Schema<IUser>(
       type: String,
       required: true,
       unique: true,
-      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Email format validation
     },
     password: {
       type: String,
@@ -35,14 +33,6 @@ export const UserSchema = new Schema<IUser>(
     },
   },
   {
-    timestamps: true, // Adds createdAt and updatedAt fields automatically
+    timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
 );
-
-// Pre-save hook for hashing passwords
-UserSchema.pre<IUser>("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
-  next();
-});

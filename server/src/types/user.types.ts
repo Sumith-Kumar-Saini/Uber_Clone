@@ -1,12 +1,13 @@
-import { Document, Model } from "mongoose";
+import { Document, Model, ObjectId } from "mongoose";
 
 /**
  * Interface representing a User document.
  */
 export interface IUser extends Document {
+  _id: ObjectId;
   email: string;
   password: string;
-  fullname: {
+  fullName: {
     firstName: string;
     lastName: string;
   };
@@ -20,3 +21,12 @@ export interface IUser extends Document {
  * Currently, no additional methods are required.
  */
 export interface IUserModel extends Model<IUser> {}
+
+export interface UserObj {
+  email: string;
+  password: string;
+  fullName: {
+    firstName: string;
+    lastName: string;
+  };
+}
