@@ -38,6 +38,7 @@ export class UserController {
         success: true,
         message: "User registered successfully",
         token,
+        userInfo: user
       });
     } catch (error) {
       // Handle unexpected errors
