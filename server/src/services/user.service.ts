@@ -35,7 +35,7 @@ export class UserService {
   static generateAuthToken(userId: ObjectId): string {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) throw new Error("Missing JWT_SECRET environment variable");
-    return jwt.sign({ _id: userId }, jwtSecret);
+    return jwt.sign({ _id: userId }, jwtSecret, { expiresIn: "14d" });
   }
 
   /**
@@ -65,13 +65,13 @@ export class UserService {
     try {
       // Hash the password before saving the user
       const hashedPassword = await this.hashPassword(password);
-      
+
       // Create the user object
       const userObject = { fullName, email, password: hashedPassword };
 
       // Save the user to the database
       const user = await UserModel.create(userObject);
-      
+
       // Convert user document to plain object and exclude the password
       const { password: _, ...userWithoutPassword } = user.toObject();
 
@@ -80,5 +80,42 @@ export class UserService {
       // Handle database errors gracefully
       throw new Error(`Error creating user: ${(error as Error).message}`);
     }
+  }
+
+  /**
+   * Validate user credentials.
+   * @param email - User's email address.
+   * @param password - Plain text password.
+   * @returns The user document if valid, otherwise null.
+   */
+  static async validateUserCredentials(
+    email: string,
+    password: string
+  ): Promise<IUser | { error: string }> {
+    // Validate required fields
+    if (!email || !password) {
+      throw new Error(
+        "Missing required fields: email and password are mandatory."
+      );
+    }
+
+    // Check if the user exists
+    const user: IUser | null = await UserModel.findOne({ email }).select(
+      "+password"
+    );
+    if (!user) {
+      return { error: "User not found" }; // User not found
+    }
+
+    // Compare the provided password with the stored hashed password
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if (!isPasswordValid) {
+      return { error: "Invalid password" }; // Invalid password
+    }
+
+    // Convert user document to plain object and exclude the password
+    const { password: _, ...userWithoutPassword } = user.toObject();
+
+    return userWithoutPassword as IUser;
   }
 }

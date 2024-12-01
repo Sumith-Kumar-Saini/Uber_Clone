@@ -145,3 +145,48 @@ The `/api/auth/register` endpoint allows new users to register for the applicati
 - **201 Created**: User successfully registered.
 - **400 Bad Request**: Validation errors occurred.
 - **500 Internal Server Error**: An unexpected error occurred on the server.
+
+### /api/auth/login
+
+#### Endpoint Description
+The `/api/auth/login` endpoint allows existing users to log in to the application. It validates the input data and returns an authentication token if the credentials are valid.
+
+#### HTTP Method
+`POST`
+
+#### Request Structure
+- **Request Body** (JSON):
+  ```json
+  {
+    "email": "john.doe@example.com",
+    "password": "StrongPassword123"
+  }
+  ```
+- **Field Validations**:
+  - `email`: Must be a valid email format.
+  - `password`: Minimum length of 8 characters.
+
+#### Response Structure
+- **Success Response** (HTTP 200):
+  ```json
+  {
+    "success": true,
+    "message": "User logged in successfully",
+    "token": "jwt_token_here"
+  }
+  ```
+
+- **Failure Response** (HTTP 401):
+  ```json
+  {
+    "success": false,
+    "message": "Invalid credentials",
+    "error": "Invalid password" // or "User not found" based on the error
+  }
+  ```
+
+#### Status Codes
+- **200 OK**: User successfully logged in.
+- **400 Bad Request**: Validation errors occurred.
+- **401 Unauthorized**: Invalid credentials provided.
+- **500 Internal Server Error**: An unexpected error occurred on the server.
