@@ -72,7 +72,10 @@ export class UserService {
       // Save the user to the database
       const user = await UserModel.create(userObject);
       
-      return user;
+      // Convert user document to plain object and exclude the password
+      const { password: _, ...userWithoutPassword } = user.toObject();
+
+      return userWithoutPassword as IUser;
     } catch (error: unknown) {
       // Handle database errors gracefully
       throw new Error(`Error creating user: ${(error as Error).message}`);
