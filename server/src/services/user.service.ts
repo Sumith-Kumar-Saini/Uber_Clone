@@ -1,121 +1,103 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { UserModel } from "../models/user.model";
 import { IUser, UserObj } from "../types/user.types";
-import { ObjectId } from "mongoose";
+import { PasswordUtils } from "../utils/password.utils";
 
 export class UserService {
   /**
-   * Hash a plain text password.
-   * @param password - Plain text password
-   * @returns Hashed password
+   * Creates a new user in the database.
+   * @param {UserObj} userObj - User object containing fullName, email, and password.
+   * @returns {(Promise<IUser>)} The created user document.
+   * @throws {Error} If required fields are missing or if user creation fails.
    */
-  static async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 10);
+  static async createUser(userObj: UserObj): Promise<IUser> {
+    this.validateRequiredFields(userObj);
+    this.checkUserExistence(userObj.email);
+    const hashedPassword = await this.hashPassword(userObj.password);
+    const user = await this.createUserInDB(userObj, hashedPassword);
+    return this.excludePasswordFromUser(user);
   }
 
   /**
-   * Compare a plain text password with a hashed password.
-   * @param password - Plain text password
-   * @param hashedPassword - Hashed password
-   * @returns Boolean indicating if they match
+   * Validates user credentials.
+   * @param {string} email - User's email address.
+   * @param {string} password - Plain text password.
+   * @returns {(Promise<IUser | { error: string }>)}
    */
-  static async comparePassword(
-    password: string,
-    hashedPassword: string
-  ): Promise<boolean> {
-    return await bcrypt.compare(password, hashedPassword);
+  static async validateUserCredentials(email: string, password: string, fullName?: { firstName: string; lastName: string }): Promise<IUser | { error: string }> {
+    if (fullName) this.validateRequiredFields({ email, password, fullName });
+    const user = await this.findUserByEmail(email);
+    if (!user) return { error: "User not found" };
+    const isPasswordValid = await this.comparePassword(password, user.password);
+    if (!isPasswordValid) return { error: "Invalid password" };
+    return this.excludePasswordFromUser(user);
   }
 
   /**
-   * Generate a JWT authentication token.
-   * @param userId - User ID to encode in the token
-   * @returns Signed JWT token
+   * Validates the required fields for user creation.
+   * @param {UserObj} userObj - User object containing email, password, and fullName.
+   * @throws {Error} If email, password, or firstName is missing.
    */
-  static generateAuthToken(userId: ObjectId): string {
-    const jwtSecret = process.env.JWT_SECRET;
-    if (!jwtSecret) throw new Error("Missing JWT_SECRET environment variable");
-    return jwt.sign({ _id: userId }, jwtSecret, { expiresIn: "14d" });
+  private static validateRequiredFields({ email, password, fullName }: UserObj): void {
+    if (!email || !password) throw new Error("Missing required fields: email and password are mandatory.");
+    if (fullName && !fullName.firstName) throw new Error("Missing required field: firstname is mandatory.");
   }
 
   /**
-   * Create a new user in the database.
-   * @param fullName - Full name object containing firstName and lastName.
-   * @param email - User's email address.
-   * @param password - Plain text password.
-   * @returns The created user document.
-   * @throws Error if required fields are missing or if user creation fails.
+   * Checks if a user with the given email already exists in the database.
+   * @param {string} email - The email address to check.
+   * @throws {Error} If a user with the given email already exists.
    */
-  static async createUser({
-    fullName,
-    email,
-    password,
-  }: UserObj): Promise<IUser> {
-    // Validate required fields
-    if (!fullName?.firstName || !email || !password) {
-      throw new Error(
-        "Missing required fields: firstname, email, and password are mandatory."
-      );
-    }
-
-    // Checks the user already exists
+  private static async checkUserExistence(email: string): Promise<void> {
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) throw new Error("Email address already exists.");
-
-    try {
-      // Hash the password before saving the user
-      const hashedPassword = await this.hashPassword(password);
-
-      // Create the user object
-      const userObject = { fullName, email, password: hashedPassword };
-
-      // Save the user to the database
-      const user = await UserModel.create(userObject);
-
-      // Convert user document to plain object and exclude the password
-      const { password: _, ...userWithoutPassword } = user.toObject();
-
-      return userWithoutPassword as IUser;
-    } catch (error: unknown) {
-      // Handle database errors gracefully
-      throw new Error(`Error creating user: ${(error as Error).message}`);
-    }
   }
 
   /**
-   * Validate user credentials.
-   * @param email - User's email address.
-   * @param password - Plain text password.
-   * @returns The user document if valid, otherwise null.
+   * Hashes the given password for secure storage.
+   * @param {string} password - The plain text password to hash.
+   * @returns {(Promise<string>)} The hashed password.
    */
-  static async validateUserCredentials(
-    email: string,
-    password: string
-  ): Promise<IUser | { error: string }> {
-    // Validate required fields
-    if (!email || !password) {
-      throw new Error(
-        "Missing required fields: email and password are mandatory."
-      );
-    }
+  private static async hashPassword(password: string): Promise<string> {
+    return await PasswordUtils.hashPassword(password);
+  }
 
-    // Check if the user exists
-    const user: IUser | null = await UserModel.findOne({ email }).select(
-      "+password"
-    );
-    if (!user) {
-      return { error: "User not found" }; // User not found
-    }
+  /**
+   * Creates a new user in the database with the given user object and hashed password.
+   * @param {UserObj} userObj - The user object to create.
+   * @param {string} hashedPassword - The hashed password for the user.
+   * @returns {(Promise<IUser>)} The created user document.
+   */
+  private static async createUserInDB(userObj: UserObj, hashedPassword: string): Promise<IUser> {
+    const user = await UserModel.create({ ...userObj, password: hashedPassword });
+    return user;
+  }
 
-    // Compare the provided password with the stored hashed password
-    const isPasswordValid = await this.comparePassword(password, user.password);
-    if (!isPasswordValid) {
-      return { error: "Invalid password" }; // Invalid password
-    }
-
-    // Convert user document to plain object and exclude the password
+  /**
+   * Excludes the password from the user document for security reasons.
+   * @param {IUser} user - The user document to exclude password from.
+   * @returns {IUser} The user document without password.
+   */
+  private static excludePasswordFromUser(user: IUser): IUser {
     const { password: _, ...userWithoutPassword } = user.toObject();
+    return userWithoutPassword;
+  }
 
-    return userWithoutPassword as IUser;
+  /**
+   * Finds a user by their email address.
+   * @param {string} email - The email address to search for.
+   * @returns {(Promise<IUser | null>)} The user document if found, otherwise null.
+   */
+  private static async findUserByEmail(email: string): Promise<IUser | null> {
+    return await UserModel.findOne({ email }).select("+password");
+  }
+
+  /**
+   * Compares a plain text password with a hashed password.
+   * @param {string} password - The plain text password to compare.
+   * @param {string} hashedPassword - The hashed password to compare with.
+   * @returns {(Promise<boolean>)} True if the passwords match, otherwise false.
+   */
+  private static async comparePassword(password: string, hashedPassword: string): Promise<boolean> {
+    return await PasswordUtils.comparePassword(password, hashedPassword);
   }
 }

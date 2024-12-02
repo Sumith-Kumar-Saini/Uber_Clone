@@ -80,113 +80,135 @@ We welcome contributions to the Uber Clone project! If you would like to propose
 
 ## API Documentation
 
-### /api/auth/register
+### Authentication Routes
 
-#### Endpoint Description
-The `/api/auth/register` endpoint allows new users to register for the application. It validates the input data and creates a new user in the database.
+#### /api/auth/register
 
-#### HTTP Method
-`POST`
-
-#### Request Structure
-- **Request Body** (JSON):
-  ```json
-  {
-    "fullName": {
-      "firstName": "John",
-      "lastName": "Doe"
-    },
-    "email": "john.doe@example.com",
-    "password": "StrongPassword123"
-  }
-  ```
-- **Field Validations**:
-  - `email`: Must be a valid email format.
-  - `fullName.firstName`: Minimum length of 3 characters.
-  - `fullName.lastName`: Optional, minimum length of 3 characters.
-  - `password`: Must be a strong password with a minimum length of 8 characters.
-
-#### Response Structure
-- **Success Response** (HTTP 201):
-  ```json
-  {
-    "success": true,
-    "message": "User registered successfully",
-    "token": "jwt_token_here",
-    "userInfo": {
-      "_id": "user_id_here",
-      "email": "john.doe@example.com",
+- **Endpoint Description**: Allows new users to register for the application. It validates the input data and creates a new user in the database.
+- **HTTP Method**: `POST`
+- **Request Structure**:
+  - **Request Body** (JSON):
+    ```json
+    {
       "fullName": {
         "firstName": "John",
         "lastName": "Doe"
       },
-      "createdAt": "2023-01-01T00:00:00.000Z",
-      "updatedAt": "2023-01-01T00:00:00.000Z"
+      "email": "john.doe@example.com",
+      "password": "StrongPassword123"
     }
-  }
-  ```
+    ```
+  - **Field Validations**:
+    - `email`: Must be a valid email format.
+    - `fullName.firstName`: Minimum length of 3 characters.
+    - `fullName.lastName`: Optional, minimum length of 3 characters.
+    - `password`: Must be a strong password with a minimum length of 8 characters.
 
-- **Failure Response** (HTTP 400):
-  ```json
-  {
-    "success": false,
-    "message": "Validation failed",
-    "errors": [
-      {
-        "msg": "Invalid Email",
-        "param": "email",
-        "location": "body"
+- **Response Structure**:
+  - **Success Response** (HTTP 201):
+    ```json
+    {
+      "success": true,
+      "message": "User registered successfully",
+      "token": "jwt_token_here",
+      "userInfo": {
+        "_id": "user_id_here",
+        "email": "john.doe@example.com",
+        "fullName": {
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-01T00:00:00.000Z"
       }
-    ]
-  }
-  ```
+    }
+    ```
 
-#### Status Codes
-- **201 Created**: User successfully registered.
-- **400 Bad Request**: Validation errors occurred.
-- **500 Internal Server Error**: An unexpected error occurred on the server.
+  - **Failure Response** (HTTP 400):
+    ```json
+    {
+      "success": false,
+      "message": "Validation failed",
+      "errors": [
+        {
+          "msg": "Invalid Email",
+          "param": "email",
+          "location": "body"
+        }
+      ]
+    }
+    ```
 
-### /api/auth/login
+- **Status Codes**:
+  - **201 Created**: User successfully registered.
+  - **400 Bad Request**: Validation errors occurred.
+  - **500 Internal Server Error**: An unexpected error occurred on the server.
 
-#### Endpoint Description
-The `/api/auth/login` endpoint allows existing users to log in to the application. It validates the input data and returns an authentication token if the credentials are valid.
+#### /api/auth/login
 
-#### HTTP Method
-`POST`
+- **Endpoint Description**: Allows existing users to log in to the application. It validates the input data and returns an authentication token if the credentials are valid.
+- **HTTP Method**: `POST`
+- **Request Structure**:
+  - **Request Body** (JSON):
+    ```json
+    {
+      "email": "john.doe@example.com",
+      "password": "StrongPassword123"
+    }
+    ```
+  - **Field Validations**:
+    - `email`: Must be a valid email format.
+    - `password`: Minimum length of 8 characters.
 
-#### Request Structure
-- **Request Body** (JSON):
-  ```json
-  {
-    "email": "john.doe@example.com",
-    "password": "StrongPassword123"
-  }
-  ```
-- **Field Validations**:
-  - `email`: Must be a valid email format.
-  - `password`: Minimum length of 8 characters.
+- **Response Structure**:
+  - **Success Response** (HTTP 200):
+    ```json
+    {
+      "success": true,
+      "message": "User logged in successfully",
+      "token": "jwt_token_here"
+    }
+    ```
 
-#### Response Structure
-- **Success Response** (HTTP 200):
-  ```json
-  {
-    "success": true,
-    "message": "User logged in successfully",
-    "token": "jwt_token_here"
-  }
-  ```
+  - **Failure Response** (HTTP 401):
+    ```json
+    {
+      "success": false,
+      "message": "Invalid credentials",
+      "error": "Invalid password" // or "User not found" based on the error
+    }
+    ```
 
-- **Failure Response** (HTTP 401):
-  ```json
-  {
-    "success": false,
-    "message": "Invalid credentials",
-    "error": "Invalid password" // or "User not found" based on the error
-  }
-  ```
+- **Status Codes**:
+  - **200 OK**: User successfully logged in.
+  - **400 Bad Request**: Validation errors occurred.
+  - **401 Unauthorized**: Invalid credentials provided.
+  - **500 Internal Server Error**: An unexpected error occurred on the server.
 
-#### Status Codes
-- **200 OK**: User successfully logged in.
-- **400 Bad Request**: Validation errors occurred.
-- **401 Unauthorized**: Invalid credentials provided.
-- **500 Internal Server Error**: An unexpected error occurred on the server.
+#### /api/auth/logout
+
+- **Endpoint Description**: Allows users to log out of the application. It clears the authentication cookie to log out the user.
+- **HTTP Method**: `POST`
+- **Request Structure**: No body required.
+- **Response Structure**:
+  - **Success Response** (HTTP 200):
+    ```json
+    {
+      "success": true,
+      "message": "Logged out successfully"
+    }
+    ```
+
+- **Status Codes**:
+  - **200 OK**: User successfully logged out.
+  - **500 Internal Server Error**: An unexpected error occurred on the server.
+
+### Token Storage
+- The application uses cookies to store the JWT token securely. The token is set as an HTTP-only cookie to prevent client-side access, enhancing security against XSS attacks.
+
+### Cookie Configuration
+- The token cookie is configured with the following options:
+  - `httpOnly`: Prevents JavaScript access to the cookie.
+  - `secure`: Ensures the cookie is sent only over HTTPS in production.
+  - `sameSite`: Restricts how cookies are sent with cross-site requests.
+  - `maxAge`: Sets the expiration time for the cookie.

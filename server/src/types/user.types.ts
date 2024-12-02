@@ -1,7 +1,7 @@
 import { Document, Model, ObjectId } from "mongoose";
 
 /**
- * Interface representing a User document.
+ * Represents a User document in the database.
  */
 export interface IUser extends Document {
   _id: ObjectId;
@@ -17,11 +17,13 @@ export interface IUser extends Document {
 }
 
 /**
- * Interface for additional User model-specific methods.
- * Currently, no additional methods are required.
+ * Extends the Model interface to include methods specific to the User model.
  */
 export interface IUserModel extends Model<IUser> {}
 
+/**
+ * Represents a user object without the MongoDB document properties.
+ */
 export interface UserObj {
   email: string;
   password: string;

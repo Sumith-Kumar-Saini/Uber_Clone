@@ -4,9 +4,10 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import { errorHandler } from "./middleware/error.middleware";
 import IndexRoute from "./routes/index.routes";
-import UserRoute from "./routes/user.routes";
+import UserRoute from "./routes/auth.routes";
 import Database from "./services/database.service";
 
 // Initialize environment variables
@@ -23,6 +24,7 @@ database.connect();
 app.use(cors());
 app.use(helmet());
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
