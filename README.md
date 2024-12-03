@@ -61,7 +61,6 @@ Uber Clone is a full-stack application that mimics the functionality of the Uber
 
 6. **Start the client** (if applicable):
    ```bash
-   cd client
    npm run dev:client
    ```
 
@@ -203,12 +202,21 @@ We welcome contributions to the Uber Clone project! If you would like to propose
   - **200 OK**: User successfully logged out.
   - **500 Internal Server Error**: An unexpected error occurred on the server.
 
-### Token Storage
-- The application uses cookies to store the JWT token securely. The token is set as an HTTP-only cookie to prevent client-side access, enhancing security against XSS attacks.
+### Token Storage and Cookie Management
 
-### Cookie Configuration
-- The token cookie is configured with the following options:
+- The application uses cookies to store the JWT token securely. The token is set as an HTTP-only cookie to prevent client-side access, enhancing security against XSS attacks.
+- **Cookie Configuration**:
   - `httpOnly`: Prevents JavaScript access to the cookie.
   - `secure`: Ensures the cookie is sent only over HTTPS in production.
   - `sameSite`: Restricts how cookies are sent with cross-site requests.
   - `maxAge`: Sets the expiration time for the cookie.
+
+### Security Considerations
+- Ensure that sensitive information, such as JWT secrets and database connection strings, are stored securely in environment variables and not hard-coded in the application.
+- Regularly update dependencies to mitigate vulnerabilities.
+- Implement logging and monitoring to detect and respond to security incidents promptly.
+
+### Troubleshooting and Monitoring
+- Monitor server logs for any errors or unusual activity.
+- Use tools like Postman or curl to test API endpoints and validate responses.
+- Ensure that the MongoDB instance is running and accessible from the application.

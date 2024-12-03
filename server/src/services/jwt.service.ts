@@ -1,6 +1,14 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 
+/**
+ * This class provides methods for generating and verifying JWT tokens.
+ */
 export class JwtService {
+  /**
+   * This method returns the secret key for JWT token generation and verification.
+   * @returns The secret key for JWT token.
+   * @throws Error if the JWT_SECRET environment variable is missing.
+   */
   private static get SecretKey(): string {
     const SECRET_KEY = process.env.JWT_SECRET;
     if (!SECRET_KEY) throw new Error("Missing JWT_SECRET environment variable");
@@ -8,10 +16,10 @@ export class JwtService {
   }
 
   /**
-   * Generate a JWT authentication token.
-   * @param payload - any data to encode in the token
-   * @param expiresIn - expires timing
-   * @returns Signed JWT token
+   * This method generates a JWT authentication token.
+   * @param payload - The data to encode in the token.
+   * @param expiresIn - The expiration time for the token.
+   * @returns The signed JWT token.
    */
   public static generateToken(
     payload: object,
@@ -21,9 +29,9 @@ export class JwtService {
   }
 
   /**
-   * Verify a JWT authentication token.
-   * @param token - JWT token to verify
-   * @returns Decoded JWT token payload if valid, otherwise an error is thrown
+   * This method verifies a JWT authentication token.
+   * @param token - The JWT token to verify.
+   * @returns The decoded JWT token payload if valid, otherwise an error is thrown.
    */
   public static verifyToken(token: string): JwtPayload | string {
     return jwt.verify(token, this.SecretKey);
