@@ -41,7 +41,7 @@ export interface IUserModel extends Model<IUser> {}
 export interface UserObj {
   email: string;
   password: string;
-  fullName: {
+  fullName?: {
     firstName: string;
     lastName: string;
   };

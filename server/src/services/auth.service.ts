@@ -1,24 +1,43 @@
-import { UserService } from "./user.service"; // Importing UserService for user creation
-import { JwtService } from "./jwt.service"; // Importing JwtService for token generation
-import { UserObj, IUser } from "../types/user.types"; // Importing UserObj and IUser types
+import { UserService } from "./user.service";
+import { JwtService } from "./jwt.service";
+import { UserObj, IUser } from "../types/user.types";
+import { ErrorObject } from "../types/error.types";
+import { ObjectId } from "mongoose";
 
 /**
- * AuthService is a static class that handles user authentication services.
+ * Handles user authentication services.
  */
 export class AuthService {
   /**
-   * Registers a new user and returns the user information along with an authentication token.
-   * This method creates a new user using the UserService and generates an authentication token using the JwtService.
-   * 
-   * @param userData - The user data for registration, including full name, email, password, and socket ID.
-   * @returns A promise that resolves to an object containing the registered user information and an authentication token.
+   * Registers a new user and returns user info with an authentication token.
+   * @param userData - User data for registration.
+   * @returns User info and authentication token, or error if registration fails.
    */
-  static async register(userData: UserObj): Promise<{ user: IUser; token: string }> {
-    // Creating a new user using the UserService
+  static async register(userData: UserObj): Promise<{ user: IUser; token: string } | ErrorObject> {
     const user = await UserService.createUser(userData);
-    // Generating an authentication token for the user using the JwtService
-    const token = JwtService.generateToken(user._id);
-    // Returning the registered user information and the authentication token
+    if ("error" in user) return user; // Return error if user creation fails
+    const token = this.generateToken(user._id);
     return { user, token };
+  }
+
+  /**
+   * Authenticates a user and returns user info with an authentication token.
+   * @param userData - User data for authentication.
+   * @returns User info and authentication token, or error if authentication fails.
+   */
+  static async login(userData: UserObj): Promise<{ user: IUser; token: string } | ErrorObject> {
+    const user = await UserService.validateUserCredentials(userData);
+    if ("error" in user) return user; // Return error if validation fails
+    const token = this.generateToken(user._id);
+    return { user, token };
+  }
+
+  /**
+   * Generates a JWT token for the user.
+   * @param userId - User ID for token generation.
+   * @returns JWT token.
+   */
+  private static generateToken(userId: ObjectId): string {
+    return JwtService.generateToken({ id: userId }, "7d");
   }
 }

@@ -1,6 +1,8 @@
 import { UserModel } from "../models/user.model";
+import { ErrorObject } from "../types/error.types";
 import { IUser, UserObj } from "../types/user.types";
 import { PasswordUtils } from "../utils/password.utils";
+import { errorMessages } from "../constants/statusMessages.constant";
 
 export class UserService {
   /**
@@ -9,9 +11,11 @@ export class UserService {
    * @returns {(Promise<IUser>)} The created user document.
    * @throws {Error} If required fields are missing or if user creation fails.
    */
-  static async createUser(userObj: UserObj): Promise<IUser> {
-    this.validateRequiredFields(userObj);
-    this.checkUserExistence(userObj.email);
+  static async createUser(userObj: UserObj): Promise<IUser | ErrorObject> {
+    const MissingRequiredFields = this.validateRequiredFields(userObj);
+    if (MissingRequiredFields) return { error: MissingRequiredFields };
+    const UserExistence = await this.checkUserExistence(userObj.email);
+    if (UserExistence) return { error: UserExistence };
     const hashedPassword = await this.hashPassword(userObj.password);
     const user = await this.createUserInDB(userObj, hashedPassword);
     return this.excludePasswordFromUser(user);
@@ -21,14 +25,15 @@ export class UserService {
    * Validates user credentials.
    * @param {string} email - User's email address.
    * @param {string} password - Plain text password.
-   * @returns {(Promise<IUser | { error: string }>)}
+   * @returns {(Promise<IUser | ErrorObject>)}
    */
-  static async validateUserCredentials(email: string, password: string, fullName?: { firstName: string; lastName: string }): Promise<IUser | { error: string }> {
-    if (fullName) this.validateRequiredFields({ email, password, fullName });
-    const user = await this.findUserByEmail(email);
-    if (!user) return { error: "User not found" };
-    const isPasswordValid = await this.comparePassword(password, user.password);
-    if (!isPasswordValid) return { error: "Invalid password" };
+  static async validateUserCredentials(userObj: UserObj): Promise<IUser | ErrorObject> {
+    const MissingRequiredFields = this.validateRequiredFields(userObj);
+    if (MissingRequiredFields) return { error: MissingRequiredFields, message: "Missing required fields" };
+    const user = await this.findUserByEmail(userObj.email);
+    if (!user) return { error: "User not found", message: "Invalid credentials" };
+    const isPasswordValid = await this.comparePassword(userObj.password, user.password);
+    if (!isPasswordValid) return { error: "Invalid password", message: "Invalid credentials" };
     return this.excludePasswordFromUser(user);
   }
 
@@ -37,9 +42,10 @@ export class UserService {
    * @param {UserObj} userObj - User object containing email, password, and fullName.
    * @throws {Error} If email, password, or firstName is missing.
    */
-  private static validateRequiredFields({ email, password, fullName }: UserObj): void {
-    if (!email || !password) throw new Error("Missing required fields: email and password are mandatory.");
-    if (fullName && !fullName.firstName) throw new Error("Missing required field: firstname is mandatory.");
+  private static validateRequiredFields({ email, password, fullName }: UserObj): null | string {
+    if (!email || !password) return errorMessages.MISSING_REQUIRED_FIELDS;
+    if (fullName && !fullName.firstName) return ("Missing required field: firstname is mandatory");
+    return null;
   }
 
   /**
@@ -47,9 +53,10 @@ export class UserService {
    * @param {string} email - The email address to check.
    * @throws {Error} If a user with the given email already exists.
    */
-  private static async checkUserExistence(email: string): Promise<void> {
+  private static async checkUserExistence(email: string): Promise<null | string> {
     const existingUser = await UserModel.findOne({ email });
-    if (existingUser) throw new Error("Email address already exists.");
+    if (existingUser) return ("Email address already exists");
+    return null;
   }
 
   /**

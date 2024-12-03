@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+import { defaultStatusCode, statusCodeMap } from "../constants/statusMessages.constant";
+import { ErrorObject } from "../types/error.types";
 
 /**
  * Utility class for handling responses in a standardized way.
@@ -27,14 +29,31 @@ export class ResponseUtils {
    * @param res - Express response object
    * @param error - Error object or string
    */
-  static sendErrorResponse(res: Response, error: unknown): void {
-    res.status(400).json({
+  static sendErrorResponse(res: Response, status: number, error: Error | string): void {
+    res.status(status).json({
       success: false,
-      message: (error as Error).message || "An unexpected error occurred",
-      stack:
-        process.env.NODE_ENV === "development"
-          ? (error as Error).stack
-          : undefined,
+      message: typeof error === 'string' ? error : error.message || "An unexpected error occurred",
+      stack: process.env.NODE_ENV === "development" ? (error as Error).stack : undefined,
     });
+  }
+
+  /**
+   * Handles errors and sends a standardized error response.
+   * @param res - Express response object
+   * @param error - Error object
+   */
+  static ErrorHandler(res: Response, error: ErrorObject): void {
+    const message = error.message || error.error;
+    const statusCode = this.getStatusCode(message);
+    res.status(statusCode).json({ success: false, message, error: error.error });
+  }
+
+  /**
+   * Gets the status code for a given message.
+   * @param message - The message to get the status code for
+   * @returns The status code for the message
+   */
+  private static getStatusCode(message: string): number {
+    return statusCodeMap[message] ?? defaultStatusCode;
   }
 }
