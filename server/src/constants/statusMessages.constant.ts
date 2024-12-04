@@ -11,6 +11,8 @@ export const statusCodeMap: Record<string, number> = {
   "Invalid password": 401,
   "Email address already exists": 409,
   "Missing required fields": 400,
+  "Unauthorized": 401,
+  "Invalid token": 401
 };
 
 // Default Status Code

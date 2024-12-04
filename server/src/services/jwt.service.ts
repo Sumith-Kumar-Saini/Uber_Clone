@@ -33,7 +33,7 @@ export class JwtService {
    * @param token - The JWT token to verify.
    * @returns The decoded JWT token payload if valid, otherwise an error is thrown.
    */
-  public static verifyToken(token: string): JwtPayload | string {
+  public static verifyToken<T>(token: string): T | JwtPayload | string {
     return jwt.verify(token, this.SecretKey);
   }
 }
