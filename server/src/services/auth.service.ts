@@ -38,6 +38,6 @@ export class AuthService {
    * @returns JWT token.
    */
   private static generateToken(userId: ObjectId): string {
-    return JwtService.generateToken({ id: userId }, "7d");
+    return JwtService.generateToken({ id: userId }, "24h");
   }
 }

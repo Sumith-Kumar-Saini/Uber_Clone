@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { UserObj } from "../types/user.types";
 import { ResponseUtils } from "../utils/response.utils";
 import { AuthService } from "../services/auth.service";
+import { BlackListTokenModel } from "../models/blackListToken.model";
 
 /**
  * Handles user authentication and registration processes.
@@ -63,8 +64,10 @@ export class AuthController {
    * @param req - Express request object.
    * @param res - Express response object.
    */
-  static logoutUser(req: Request, res: Response): void {
+  static async logoutUser(req: Request, res: Response): Promise<void> {
     res.clearCookie("token");
+    const token: string = req.cookies.token || req.headers.authorization?.split(' ')[1];
+    await BlackListTokenModel.create({ token });
     res.status(200).json({ success: true, message: "Logged out successfully" });
   }
 
@@ -75,7 +78,7 @@ export class AuthController {
    * @param responseContext - Response context.
    */
   private static setCookieAndRespond(res: Response, responseContext: { status: number, data: object, token: string }): void {
-    res.cookie("token", responseContext.token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie("token", responseContext.token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 24 * 60 * 60 * 1000 });
     res.status(responseContext.status).json(responseContext.data);
   }
 }

@@ -23,7 +23,7 @@ export class JwtService {
    */
   public static generateToken(
     payload: object,
-    expiresIn: string | number = "1h"
+    expiresIn: string | number = "24h"
   ): string {
     return jwt.sign(payload, this.SecretKey, { expiresIn });
   }
