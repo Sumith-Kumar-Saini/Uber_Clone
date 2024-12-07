@@ -3,12 +3,15 @@
 ## Project Overview
 Uber Clone is a full-stack application that mimics the functionality of the Uber ride-sharing platform. It allows users to register, log in, and manage their profiles while providing real-time tracking and booking features. The project aims to demonstrate the capabilities of the MERN stack (MongoDB, Express.js, React, Node.js) in building scalable web applications.
 
-### Key Features
+## Key Features
 - User registration and authentication
 - Real-time tracking of rides
 - User profile management
 - Secure password storage and authentication using JWT
 - RESTful API for seamless interaction between client and server
+- Token-based authentication with JWT for enhanced security
+- Blacklist management for revoked tokens
+- Input validation for user registration and login
 
 ## Technology Stack
 - **MongoDB**: NoSQL database for storing user data and ride information.
@@ -82,7 +85,6 @@ We welcome contributions to the Uber Clone project! If you would like to propose
 ### Authentication Routes
 
 #### /api/auth/register
-
 - **Endpoint Description**: Allows new users to register for the application. It validates the input data and creates a new user in the database.
 - **HTTP Method**: `POST`
 - **Request Structure**:
@@ -144,7 +146,6 @@ We welcome contributions to the Uber Clone project! If you would like to propose
   - **500 Internal Server Error**: An unexpected error occurred on the server.
 
 #### /api/auth/login
-
 - **Endpoint Description**: Allows existing users to log in to the application. It validates the input data and returns an authentication token if the credentials are valid.
 - **HTTP Method**: `POST`
 - **Request Structure**:
@@ -185,7 +186,6 @@ We welcome contributions to the Uber Clone project! If you would like to propose
   - **500 Internal Server Error**: An unexpected error occurred on the server.
 
 #### /api/auth/logout
-
 - **Endpoint Description**: Allows users to log out of the application. It clears the authentication cookie to log out the user.
 - **HTTP Method**: `POST`
 - **Request Structure**: No body required.
@@ -202,8 +202,56 @@ We welcome contributions to the Uber Clone project! If you would like to propose
   - **200 OK**: User successfully logged out.
   - **500 Internal Server Error**: An unexpected error occurred on the server.
 
-### Token Storage and Cookie Management
+### User Profile Route
 
+#### /api/user/profile
+- **Endpoint Description**: Retrieves the authenticated user's profile information. This endpoint requires the user to be logged in and provides access to their personal details.
+- **HTTP Method**: `GET`
+- **Request Structure**: No body required. The request must include the authentication token in the headers.
+- **Headers**:
+  - `Authorization`: Bearer token (JWT) for authentication.
+
+- **Response Structure**:
+  - **Success Response** (HTTP 200):
+    ```json
+    {
+      "success": true,
+      "user": {
+        "_id": "user_id_here",
+        "email": "john.doe@example.com",
+        "fullName": {
+          "firstName": "John",
+          "lastName": "Doe"
+        },
+        "createdAt": "2023-01-01T00:00:00.000Z",
+        "updatedAt": "2023-01-01T00:00:00.000Z"
+      }
+    }
+    ```
+
+  - **Failure Response** (HTTP 401):
+    ```json
+    {
+      "success": false,
+      "message": "User not authenticated"
+    }
+    ```
+
+  - **Failure Response** (HTTP 404):
+    ```json
+    {
+      "success": false,
+      "message": "User not found"
+    }
+    ```
+
+- **Status Codes**:
+  - **200 OK**: User profile retrieved successfully.
+  - **401 Unauthorized**: User is not authenticated.
+  - **404 Not Found**: User does not exist in the database.
+  - **500 Internal Server Error**: An unexpected error occurred on the server.
+
+### Token Storage and Cookie Management
 - The application uses cookies to store the JWT token securely. The token is set as an HTTP-only cookie to prevent client-side access, enhancing security against XSS attacks.
 - **Cookie Configuration**:
   - `httpOnly`: Prevents JavaScript access to the cookie.
