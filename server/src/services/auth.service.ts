@@ -1,13 +1,31 @@
+import { Request } from "express";
 import { UserService } from "./user.service";
 import { JwtService } from "./jwt.service";
 import { UserObj, IUser } from "../types/user.types";
 import { ErrorObject } from "../types/error.types";
 import { ObjectId } from "mongoose";
+import { BlackListTokenModel } from "../models/blackListToken.model";
 
 /**
  * Handles user authentication services.
  */
 export class AuthService {
+  static extractToken(req: Request): string | null {
+    return req.cookies.token || req.headers.authorization?.split(' ')[1] || null;
+  }
+
+  static async isTokenBlacklisted(token: string): Promise<boolean> {
+    const blacklistedToken = await BlackListTokenModel.findOne({ token });
+    return !!blacklistedToken;
+  }
+
+  static async validateAndFetchUser(token: string): Promise<IUser | null> {
+    const decoded = JwtService.verifyToken<{ id: string }>(token);
+    if (typeof decoded === 'string') return null; // Invalid token
+
+    return await UserService.findUserById(decoded.id);
+  }
+
   /**
    * Registers a new user and returns user info with an authentication token.
    * @param userData - User data for registration.

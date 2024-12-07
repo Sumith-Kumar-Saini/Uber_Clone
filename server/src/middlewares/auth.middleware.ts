@@ -1,30 +1,21 @@
 import { Request, Response, NextFunction } from "express";
 import { ResponseUtils } from "../utils/response.utils";
-import { UserModel } from "../models/user.model";
-import { JwtService } from "../services/jwt.service";
-import { IUser } from "../types/user.types";
-import { BlackListTokenModel } from "../models/blackListToken.model";
+import { AuthService } from "../services/auth.service";
 
-/**
- * The class is not good to run, it should have same updates.
- */
 export class AuthMiddleware {
   static async authenticatedUser(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const token: string = req.cookies.token || req.headers.authorization?.split(' ')[1];
-    if (!token) return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
-
-    const isBlackListToken = await BlackListTokenModel.findOne({ token });
-
-    if (isBlackListToken) return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
-
     try {
-      const decoded = JwtService.verifyToken<{ id: string }>(token);
-      if (typeof decoded === 'string') return ResponseUtils.ErrorHandler(res, { error:'Invalid token' });
-      const user: IUser = await UserModel.findById(decoded.id).select("-password");
+      const token = AuthService.extractToken(req);
+      if (!token) return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
+
+      const isBlacklisted = await AuthService.isTokenBlacklisted(token);
+      if (isBlacklisted) return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
+
+      const user = await AuthService.validateAndFetchUser(token);
       if (!user) return ResponseUtils.ErrorHandler(res, { error: "User not found" });
+
       req.user = user;
       next();
-      return;
     } catch (error) {
       return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
     }
