@@ -10,7 +10,7 @@ export class AuthValidator {
    * 
    * @returns An array of validation rules for registration.
    */
-  static validateRegistration() {
+  static get validateRegistrationInput() {
     return [
       // Validate email to ensure it's in the correct format
       body("email").isEmail().withMessage("Invalid Email"),
@@ -29,7 +29,7 @@ export class AuthValidator {
    * 
    * @returns An array of validation rules for login.
    */
-  static validateLogin() {
+  static get validateLoginInput() {
     return [
       // Validate email to ensure it's in the correct format
       body("email").isEmail().withMessage("Invalid Email"),

@@ -49,6 +49,17 @@ export class ResponseUtils {
   }
 
   /**
+   * Sets the authentication token cookie and sends a response.
+   * 
+   * @param res - Express response object.
+   * @param responseContext - Response context.
+   */
+  static setCookieAndRespond(res: Response, responseContext: { status: number, data: object, token: string }): void {
+    res.cookie("token", responseContext.token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "strict", maxAge: 24 * 60 * 60 * 1000 });
+    res.status(responseContext.status).json(responseContext.data);
+  }
+
+  /**
    * Gets the status code for a given message.
    * @param message - The message to get the status code for
    * @returns The status code for the message

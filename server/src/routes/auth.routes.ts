@@ -1,15 +1,23 @@
 import { Router } from "express";
-import { AuthController } from "../controllers/auth.controller";
+import { UserAuthController } from "../controllers/Auth.controller";
 import { AuthValidator } from "../validators/auth.validator";
 import { AuthMiddleware } from "../middlewares/auth.middleware";
+import { roleCheck } from "../middlewares/roleCheck.middleware";
 
 // Initialize the Express router for authentication routes.
 const authRouter = Router();
 
-// Authentication Routes
-authRouter.post("/register", AuthValidator.validateRegistration(), AuthController.registerUser);
-authRouter.post("/login", AuthValidator.validateLogin(), AuthController.loginUser);
-authRouter.get("/logout", AuthMiddleware.authenticatedUser, AuthController.logoutUser);
+authRouter.use(roleCheck());
+
+// User Authentication Routes
+authRouter.post("/user/register", AuthValidator.validateRegistrationInput, UserAuthController.registerUser);
+authRouter.post("/user/login", AuthValidator.validateLoginInput, UserAuthController.loginUser);
+authRouter.get("/user/logout", AuthMiddleware.verifyAuthToken, UserAuthController.logoutUser);
+
+// Captain Authentication Routes
+authRouter.post("/captain/register")
+authRouter.post("/captain/login")
+authRouter.get("/captain/logout")
 
 // Export the authentication router.
 export default authRouter;
