@@ -1,5 +1,5 @@
 import { model } from "mongoose";
-import { BlackListTokenSchema } from "../schemas/blackListToken.schema";
+import { BlackListTokenSchema } from "@/schemas/blackListToken.schema";
 
 /**
  * Defines the BlackListToken Model based on the BlackListTokenSchema.

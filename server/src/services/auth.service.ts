@@ -1,10 +1,10 @@
 import { Request } from "express";
 import { UserService } from "./user.service";
 import { JwtService } from "./jwt.service";
-import { UserObj, IUser } from "../types/user.types";
-import { ErrorObject } from "../types/error.types";
+import { UserObj, IUser } from "@/types/user.types";
+import { ErrorObject } from "@/types/error.types";
 import { ObjectId } from "mongoose";
-import { BlackListTokenModel } from "../models/blackListToken.model";
+import { BlackListTokenModel } from "@/models/blackListToken.model";
 
 /**
  * Handles user authentication services.

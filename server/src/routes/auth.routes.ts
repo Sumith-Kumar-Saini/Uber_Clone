@@ -1,23 +1,22 @@
 import { Router } from "express";
-import { UserAuthController } from "../controllers/Auth.controller";
-import { AuthValidator } from "../validators/auth.validator";
-import { AuthMiddleware } from "../middlewares/auth.middleware";
-import { roleCheck } from "../middlewares/roleCheck.middleware";
+import { UserAuthController } from "@/controllers/auth.controller";
+import { AuthValidator } from "@/validators/auth.validator";
+import { AuthMiddleware } from "@/middlewares/auth.middleware";
+import { HandleAuthMiddleware } from "@/middlewares/handleAuth.middleware";
+import { roleCheck, RoleHandle } from "@/middlewares/roleCheck.middleware";
 
 // Initialize the Express router for authentication routes.
-const authRouter = Router();
+const router = Router();
+const roleHandle = new RoleHandle();
 
-authRouter.use(roleCheck());
+router.use(roleHandle.checkMiddleware);
+const handleAuthMiddleware = new HandleAuthMiddleware(roleHandle.role)
 
-// User Authentication Routes
-authRouter.post("/user/register", AuthValidator.validateRegistrationInput, UserAuthController.registerUser);
-authRouter.post("/user/login", AuthValidator.validateLoginInput, UserAuthController.loginUser);
-authRouter.get("/user/logout", AuthMiddleware.verifyAuthToken, UserAuthController.logoutUser);
 
-// Captain Authentication Routes
-authRouter.post("/captain/register")
-authRouter.post("/captain/login")
-authRouter.get("/captain/logout")
+// Authentication Routes
+router.post("/register", handleAuthMiddleware.register, UserAuthController.registerUser);
+router.post("/login", handleAuthMiddleware.login, UserAuthController.loginUser);
+router.get("/logout", handleAuthMiddleware.logout, UserAuthController.logoutUser);
 
 // Export the authentication router.
-export default authRouter;
+export default router;

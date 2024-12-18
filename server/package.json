@@ -4,8 +4,8 @@
   "main": "server.js",
   "private": true,
   "scripts": {
-    "dev": "nodemon server.ts",
-    "build": "tsc",
+    "dev": "nodemon -r tsconfig-paths/register server.ts",
+    "build": "tsc && tsc-alias",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -31,6 +31,8 @@
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
-    "@types/node": "^22.10.1"
+    "@types/node": "^22.10.1",
+    "tsc-alias": "^1.8.10",
+    "tsconfig-paths": "^4.2.0"
   }
 }

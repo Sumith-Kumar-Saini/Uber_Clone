@@ -1,6 +1,6 @@
 import debug from "debug"; // Importing the 'debug' module for logging purposes.
-import normalizePort from "../utils/normalizePort"; // Importing the normalizePort utility function.
-import { Logger } from "../types/logger.types"; // Importing the Logger interface for type checking.
+import normalizePort from "@/utils/normalizePort"; // Importing the normalizePort utility function.
+import { Logger } from "@/types/logger.types"; // Importing the Logger interface for type checking.
 
 /**
  * Defines the namespace constants for the server logger.
@@ -28,4 +28,4 @@ export const serverLogger: Logger = {
  * 
  * @property {number} PORT - The normalized port number for the server.
  */
-export const PORT = normalizePort(process.env.PORT || "5000"); // Normalizing the port number from environment variable or defaulting to 5000.
+export const PORT = normalizePort(process.env.PORT || "4000"); // Normalizing the port number from environment variable or defaulting to 5000.

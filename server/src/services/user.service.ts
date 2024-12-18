@@ -1,8 +1,8 @@
-import { UserModel } from "../models/user.model";
-import { ErrorObject } from "../types/error.types";
-import { IUser, UserObj } from "../types/user.types";
-import { PasswordUtils } from "../utils/password.utils";
-import { errorMessages } from "../constants/statusMessages.constant";
+import { UserModel } from "@/models/user.model";
+import { ErrorObject } from "@/types/error.types";
+import { IUser, UserObj } from "@/types/user.types";
+import { PasswordUtils } from "@/utils/password.utils";
+import { errorMessages } from "@/constants/statusMessages.constant";
 import { ObjectId } from "mongoose";
 
 export class UserService {

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { ResponseUtils } from "../utils/response.utils";
-import { AuthService } from "../services/auth.service";
+import { ResponseUtils } from "@/utils/response.utils";
+import { AuthService } from "@/services/auth.service";
 
 export class AuthMiddleware {
-  static async verifyAuthToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+  static async verifyUserAuthToken(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const token = AuthService.extractToken(req);
       if (!token) return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
@@ -20,4 +20,6 @@ export class AuthMiddleware {
       return ResponseUtils.ErrorHandler(res, { error: "Unauthorized" });
     }
   }
+
+  static async verifyCaptainAuthToken(req: Request, res: Response, next: NextFunction): Promise<void> { }
 }

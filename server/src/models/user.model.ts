@@ -1,6 +1,6 @@
 import { model } from "mongoose";
-import { IUser, IUserModel } from "../types/user.types";
-import { UserSchema } from "../schemas/user.schema";
+import { IUser, IUserModel } from "@/types/user.types";
+import { UserSchema } from "@/schemas/user.schema";
 
 /**
  * Defines the User Model based on the UserSchema with IUser and IUserModel interfaces.

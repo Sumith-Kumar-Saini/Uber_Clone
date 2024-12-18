@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { databaseLogger } from "../config/database.config";
+import { databaseLogger } from "@/config/database.config";
 
 /**
  * Represents a connection to the MongoDB database.

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ResponseUtils } from "../utils/response.utils";
+import { ResponseUtils } from "@/utils/response.utils";
 
 export class UserController {
   static profile(req: Request, res: Response): void {

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { UserObj } from "../types/user.types";
-import { ResponseUtils } from "../utils/response.utils";
-import { AuthService } from "../services/auth.service";
-import { BlackListTokenModel } from "../models/blackListToken.model";
+import { UserObj } from "@/types/user.types";
+import { ResponseUtils } from "@/utils/response.utils";
+import { AuthService } from "@/services/auth.service";
+import { BlackListTokenModel } from "@/models/blackListToken.model";
 
 /**
  * Handles user authentication and registration processes.

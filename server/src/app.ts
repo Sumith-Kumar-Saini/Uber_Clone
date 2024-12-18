@@ -5,11 +5,11 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { errorHandler } from "./middlewares/error.middleware";
-import IndexRoute from "./routes/index.routes";
-import AuthRoute from "./routes/auth.routes";
-import Database from "./services/database.service";
-import UserRoute from "./routes/user.routes";
+import { errorHandler } from "@/middlewares/error.middleware";
+import IndexRoute from "@/routes/index.routes";
+import AuthRoute from "@/routes/auth.routes";
+import Database from "@/services/database.service";
+import UserRoute from "@/routes/user.routes";
 
 // Load environment variables
 dotenv.config();

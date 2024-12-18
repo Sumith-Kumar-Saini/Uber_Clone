@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { defaultStatusCode, statusCodeMap } from "../constants/statusMessages.constant";
-import { ErrorObject } from "../types/error.types";
+import { defaultStatusCode, statusCodeMap } from "@/constants/statusMessages.constant";
+import { ErrorObject } from "@/types/error.types";
 
 /**
  * Utility class for handling responses in a standardized way.

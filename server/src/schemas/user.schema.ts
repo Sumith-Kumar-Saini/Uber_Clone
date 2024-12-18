@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import { IUser } from "../types/user.types";
+import { IUser } from "@/types/user.types";
 import { commonFieldsSchema } from "./shared/common.schema";
 
 /**
