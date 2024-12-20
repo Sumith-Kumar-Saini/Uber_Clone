@@ -47,7 +47,11 @@ export class AuthValidator {
     ];
   }
 
-  static validateCaptainRegistration() {}
+  static get validateCaptainRegistration() {
+    return [];
+  }
 
-  static validateCaptainLogin() {}
+  static get validateCaptainLogin() {
+    return [];
+  }
 }
