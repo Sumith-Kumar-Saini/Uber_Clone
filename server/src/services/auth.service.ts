@@ -61,52 +61,46 @@ export class AuthService {
   }
 
   /**
-   * this is not ready, don't use
-   */
-  register(req: Request) {
-    const handler = this.RegistrationHandler(req.role as Roles);
-    return handler(req);
-  }
-
-  /**
-   * this is not ready, don't use
-   */
-  RegistrationHandler(role: Roles) {
-    switch (role) {
-      case "user": return this.registerUser;
-      case "captain": return this.registerCaptain;
-      default:
-        throw new Error("Invalid Role")
+    // this is not ready, don't use
+    register(req: Request) {
+      const handler = this.RegistrationHandler(req.role as Roles);
+      return handler(req);
     }
-  }
-
-  /**
-   * this is not ready, don't use
-   */
-  registerUser(req: Request) {
-    // Logic specific to user registration
-    return {
-      statusCode: 201,
-      response: {
-          message: "User registered successfully.",
-          error: null,
-      },
-    };
-  }
-
-  /**
-   * this is not ready, don't use
-   */
-  registerCaptain(req: Request) {
-    // Logic specific to captain registration
-    return {
-      statusCode: 201,
-      response: {
-          message: "Captain registered successfully.",
-          error: null,
-      },
-    };
-  }
+    
+    // this is not ready, don't use
+    RegistrationHandler(role: Roles) {
+      switch (role) {
+        case "user": return this.registerUser;
+        case "captain": return this.registerCaptain;
+        default:
+          throw new Error("Invalid Role")
+      }
+    }
+    
+    // this is not ready, don't use
+    registerUser(req: Request) {
+      // Logic specific to user registration
+      return {
+        statusCode: 201,
+        response: {
+            message: "User registered successfully.",
+            error: null,
+        },
+      };
+    }
+    
+    // this is not ready, don't use
+    registerCaptain(req: Request) {
+      // Logic specific to captain registration
+      return {
+        statusCode: 201,
+        response: {
+            message: "Captain registered successfully.",
+            error: null,
+        },
+      };
+    }
+  */
 }
 
 
