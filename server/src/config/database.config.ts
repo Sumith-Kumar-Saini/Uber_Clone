@@ -1,5 +1,5 @@
 import debug from "debug"; // Importing the 'debug' module for logging purposes.
-import { Logger } from "../types/logger.types"; // Importing the Logger interface for type checking.
+import { Logger } from "@/types/logger.types"; // Importing the Logger interface for type checking.
 
 /**
  * Defines the namespace constants for the database logger.

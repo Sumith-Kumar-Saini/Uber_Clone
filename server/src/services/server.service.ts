@@ -1,6 +1,6 @@
 import http from "node:http";
 import { Application } from "express";
-import { PORT, serverLogger } from "../config/server.config";
+import { PORT, serverLogger } from "@/config/server.config";
 
 /**
  * Represents the server instance.

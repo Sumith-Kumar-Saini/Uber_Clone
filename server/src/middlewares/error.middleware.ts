@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'; // Importing Express request, response, and next function types
-import { serverLogger } from '../config/server.config'; // Importing serverLogger for error logging
+import { serverLogger } from '@/config/server.config'; // Importing serverLogger for error logging
 
 /**
  * Handles errors that occur within the application by logging the error and sending a generic error response.

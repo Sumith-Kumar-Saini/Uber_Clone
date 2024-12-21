@@ -1,5 +1,5 @@
 import { Router } from 'express'; // Importing Express Router for routing
-import { IndexController } from '../controllers/index.controller'; // Importing IndexController for handling root route
+import { IndexController } from '@/controllers/index.controller'; // Importing IndexController for handling root route
 
 // Initialize the Express router for handling routes
 const router = Router();

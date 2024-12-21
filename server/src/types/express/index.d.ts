@@ -5,9 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       user?: IUser;
-    }
-    interface Response {
-      role?: "user" | "captain" | string;
+      role?: "user" | "captain";
     }
   }
 }

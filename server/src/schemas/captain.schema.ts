@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 import { commonFieldsSchema } from "./shared/common.schema";
-import { ICaptain } from "../types/captain.types";
+import { ICaptain } from "@/types/captain.types";
 
 /**
  * Defines the Mongoose schema for the Captain model.
