@@ -1,16 +1,17 @@
 import { Router } from "express";
-import { UserAuthController } from "@/controllers/auth.controller";
-import { AuthHandlerMiddleware } from "@/middlewares/authHandler.middleware";
+import { AuthController } from "@/controllers/auth.controller";
+import { AuthMiddleware } from "@/middlewares/authHandler.middleware";
 
 // Initialize the Express router for authentication routes.
 const router = Router();
-// Authentication Middlewares.
-router.use(AuthHandlerMiddleware.roleCheck)
 
-// Authentication Routes.
-router.post("/register", AuthHandlerMiddleware.register, UserAuthController.registerUser);
-router.post("/login", AuthHandlerMiddleware.login, UserAuthController.loginUser);
-router.get("/logout", AuthHandlerMiddleware.logout, UserAuthController.logoutUser);
+// Authentication Middlewares.
+router.use(AuthMiddleware.roleCheck);
+
+// user Authentication Routes.
+router.post("/register",  AuthMiddleware.register, AuthController.register);
+router.post("/login", AuthMiddleware.login, AuthController.login);
+router.get("/logout", AuthMiddleware.logout, AuthController.logout);
 
 // Export the authentication router.
 export default router;

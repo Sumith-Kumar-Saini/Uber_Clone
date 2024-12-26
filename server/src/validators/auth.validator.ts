@@ -1,57 +1,41 @@
-import { body } from "express-validator";
+import { Roles } from "@/types/roles.types";
+import { ValidationRules } from "@/utils/validationRules.utils";
 
 /**
- * Represents a class for validating user authentication requests.
+ * Validator class for handling authentication validations dynamically.
  */
 export class AuthValidator {
   /**
-   * Validates the request body for user registration.
-   * This method ensures that the registration request meets the required criteria.
-   *
-   * @returns An array of validation rules for registration.
+   * Generate validation rules based on user type and action.
+   * @param {string} type - The type of user ('user' or 'captain').
+   * @param {string} action - The action ('register' or 'login').
+   * @returns An array of validation rules.
    */
-  static get validateUserRegistration() {
-    return [
-      // Validate email to ensure it's in the correct format
-      body("email").isEmail().withMessage("Invalid Email"),
-      // Validate first name to ensure it's at least 3 characters long
-      body("fullName.firstName")
-        .isLength({ min: 3 })
-        .withMessage("First name must be at least 3 characters long"),
-      // Validate last name to ensure it's at least 3 characters long if provided
-      body("fullName.lastName")
-        .optional()
-        .isLength({ min: 3 })
-        .withMessage("Last name must be at least 3 characters long"),
-      // Validate password to ensure it's strong and at least 8 characters long
-      body("password")
-        .isStrongPassword({ minLength: 8 })
-        .withMessage("Password must be at least 8 characters long and strong"),
+  static getRules(type: Roles, action: "register" | "login") {
+    const isRegistration = action === "register";
+    const isCaptain = type === "captain";
+
+    const rules = [
+      ValidationRules.email(),
+      ValidationRules.password(8, isRegistration),
     ];
-  }
 
-  /**
-   * Validates the request body for user login.
-   * This method ensures that the login request meets the required criteria.
-   *
-   * @returns An array of validation rules for login.
-   */
-  static get validateUserLogin() {
-    return [
-      // Validate email to ensure it's in the correct format
-      body("email").isEmail().withMessage("Invalid Email"),
-      // Validate password to ensure it's at least 8 characters long
-      body("password")
-        .isLength({ min: 8 })
-        .withMessage("Password must be at least 8 characters long"),
-    ];
-  }
+    if (isRegistration) {
+      rules.push(
+        ValidationRules.Name("fullName.firstName"),
+        ValidationRules.optionalName("fullName.lastName")
+      );
 
-  static get validateCaptainRegistration() {
-    return [];
-  }
+      if (isCaptain) {
+        rules.push(
+          ValidationRules.vehicleColor(),
+          ValidationRules.vehiclePlate(),
+          ValidationRules.vehicleCapacity(),
+          ValidationRules.vehicleType()
+        );
+      }
+    }
 
-  static get validateCaptainLogin() {
-    return [];
+    return rules;
   }
 }

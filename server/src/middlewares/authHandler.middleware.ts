@@ -1,39 +1,46 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthMiddleware } from "./auth.middleware";
-import { AuthValidator } from "@/validators/auth.validator";
-import { Roles } from "@/types/roles.types";
 import { ResponseUtils } from "@/utils/response.utils";
 import { ValidationChain } from "express-validator";
-import { ExpressMiddleware } from "@/types/route.types";
+import { RoleUtils } from "@/utils/role.utils";
+import { Roles } from "@/types/roles.types";
 
-export class AuthHandlerMiddleware {
-  private static _role: Roles;
-  static get role(): Roles { return this._role };
-  static set role(value: Roles) { this._role = value };
-
-  static roleCheck(req: Request, res: Response, next: NextFunction): void {
+export class AuthMiddleware {
+  static roleCheck = (req: Request, res: Response, next: NextFunction): void => {
     const role = req.headers["x-auth-role"] as Roles | undefined;
-    if (!role) return ResponseUtils.sendErrorResponse(res, 400, "Role is required in the header");
-    if (role!== "user" && role!== "captain") return ResponseUtils.sendErrorResponse(res, 400, "Role only can be user or captain");
-    req.role = req.role = role;
-    next();
+    if (!role) 
+      return ResponseUtils.sendErrorResponse(res, 400, "Role is required in the headers");
+    if (role !== "user" && role !== "captain") 
+      return ResponseUtils.sendErrorResponse(res, 400, "Role is invalid; it can only be a user or captain");
+    req.role = role;
+    return next();
+  };
+
+  static register = async (req: Request, res: Response, next: NextFunction): Promise<void> => { 
+    if (!req.role) return this.RoleNotFound(res);
+    return await this.runMultipleMiddlewares(RoleUtils.middleware.register(req.role), req, res, next);
+  };
+
+  static login = async (req: Request, res: Response, next: NextFunction): Promise<void> => { 
+    if (!req.role) return this.RoleNotFound(res);
+    return await this.runMultipleMiddlewares(RoleUtils.middleware.login(req.role), req, res, next);
+  };
+
+  static logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => { 
+    if (!req.role) return this.RoleNotFound(res);
+    return await RoleUtils.middleware.logout(req.role)(req, res, next);
+  };
+
+  private static RoleNotFound(res: Response): void {
+    return ResponseUtils.sendErrorResponse(res, 400, "Role not found!");
   }
 
-  static get register(): ValidationChain[] {
-    if (this.role === "user") return AuthValidator.validateUserRegistration;
-    if (this.role === "captain") return AuthValidator.validateCaptainRegistration;
-    return [];
+  private static async runMultipleMiddlewares(middlewares: ValidationChain[], req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      for (const middleware of middlewares)
+        await new Promise<void>((resolve, reject)=>{middleware(req, res, (err?: any)=>(err ? reject(err) : resolve()))});
+      return next();
+    } catch (err) {
+      return next(err);
+    }
   }
-
-  static get login(): ValidationChain[] {
-    if (this.role === "user") return AuthValidator.validateUserLogin;
-    if (this.role === "captain") return AuthValidator.validateCaptainLogin;
-    return [];
-  }
-
-  static get logout(): ExpressMiddleware {
-    if (this.role === "user") return AuthMiddleware.verifyUserAuthToken;
-    if (this.role === "captain") return AuthMiddleware.verifyCaptainAuthToken;
-    return () => {};
-  }  
 }
