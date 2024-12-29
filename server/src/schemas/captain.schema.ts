@@ -41,7 +41,7 @@ export const CaptainSchema = new Schema<ICaptain>({
      * 
      * @property {String} plateCode - The vehicle's plate code.
      */
-    plateCode: {
+    plate: {
       type: String,
       required: true,
     },
@@ -70,7 +70,7 @@ export const CaptainSchema = new Schema<ICaptain>({
     type: {
       type: String,
       required: true,
-      enum: ["2_wheeler", "3_wheeler", "4_wheeler"],
+      enum: ["TwoWheeler", "ThreeWheeler", "FourWheeler"],
     },
   },
   /**

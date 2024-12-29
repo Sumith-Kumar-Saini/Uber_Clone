@@ -28,7 +28,7 @@ export interface ICaptain extends Document {
     color: string;
     plateCode: string;
     capacity: number;
-    type: '2_wheeler' | '3_wheeler' | '4_wheeler';
+    type: "TwoWheeler" | "ThreeWheeler" | "FourWheeler";
   };
   location: {
     latitude: number;
@@ -56,23 +56,22 @@ export interface ICaptainModel extends Model<ICaptain> {}
  * @property {{ color: string; plateCode: string; capacity: number; type: '2_wheeler' | '3_wheeler' | '4_wheeler'; }} vehicle - Represents the Captain's vehicle.
  * @property {{ latitude: number; longitude: number; }} location - Represents the Captain's location.
  */
-export interface CaptainObj {
-  fullName?: {
+export interface CaptainRegisterObj {
+  fullName: {
     firstName: string;
     lastName: string;
   };
   email: string;
   password: string;
-  socketID: string;
-  status: "active" | "inactive";
-  vehicle?: {
+  vehicle: {
     color: string;
     plateCode: string;
     capacity: number;
-    type: '2_wheeler' | '3_wheeler' | '4_wheeler';
+    type: "TwoWheeler" | "ThreeWheeler" | "FourWheeler";
   };
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
+}
+
+export interface CaptainLoginObj {
+  email: string;
+  password: string;
 }
