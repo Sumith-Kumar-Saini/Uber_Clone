@@ -4,6 +4,6 @@ import { AuthMiddleware } from "@/middlewares/auth.middleware";
 
 const UserRouter = Router();
 
-UserRouter.get("/profile", AuthMiddleware.verifyUserAuthToken, UserController.profile)
+UserRouter.get("/profile", AuthMiddleware.verifyUser, UserController.profile);
 
 export default UserRouter;

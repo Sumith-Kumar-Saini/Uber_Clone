@@ -1,8 +1,15 @@
-import { AuthValidator } from "@/validators/auth.validator";
-import { AuthMiddleware } from "@/middlewares/auth.middleware";
+import { NextFunction, Request, Response } from "express";
+import { AuthValidator } from "./validation.middleware";
+import { Verify } from "./verify.middleware";
 import { Roles } from "@/types/roles.types";
 
-class Middlewares {
+class Helper {
+  static RoleNotFound(res: Response) {
+    return res.status(400).json({ message: "Role not found!" });
+  }
+}
+
+export class Middleware {
   static register(role: Roles) {
     switch (role) {
       case "user":
@@ -10,7 +17,7 @@ class Middlewares {
       case "captain":
         return AuthValidator.getRules("captain", "register");
       default:
-        return [];
+        return Helper.RoleNotFound;
     }
   }
 
@@ -21,23 +28,18 @@ class Middlewares {
       case "captain":
         return AuthValidator.getRules("captain", "login");
       default:
-        return [];
+        return Helper.RoleNotFound;
     }
   }
 
-  static logout(role: Roles) {
+  static verify(role: Roles) {
     switch (role) {
       case "user":
-        return AuthMiddleware.verifyUser;
+        return Verify.user;
       case "captain":
-        return AuthMiddleware.verifyCaptain;
+        return Verify.captain;
       default:
         return () => {};
     }
   }
 }
-
-export class RoleUtils {
-  static middleware = Middlewares;
-}
-

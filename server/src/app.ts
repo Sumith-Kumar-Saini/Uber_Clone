@@ -6,10 +6,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "@/middlewares/error.middleware";
-import IndexRoute from "@/routes/index.routes";
-import AuthRoute from "@/routes/auth.routes";
 import Database from "@/services/database.service";
-import UserRoute from "@/routes/user.routes";
+import APIRoutes from "@/routes";
 
 // Load environment variables
 dotenv.config();
@@ -30,9 +28,7 @@ app.use(express.json()); // Parse JSON bodies
 app.use(express.urlencoded({ extended: false })); // Parse URL-encoded bodies
 
 // Define routes
-app.use("/", IndexRoute); // Index route
-app.use("/api/auth", AuthRoute); // Auth route
-app.use("/api/user", UserRoute); // User route
+app.use("/api", APIRoutes);
 
 // Handle errors
 app.use(errorHandler);
